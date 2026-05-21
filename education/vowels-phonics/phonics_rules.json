@@ -1,0 +1,36 @@
+{
+  "basic_rules": [
+    {
+      "name": "CVC Pattern",
+      "description": "Consonant-Vowel-Consonant",
+      "examples": ["cat", "hat", "sit", "pen"],
+      "notes": "Single syllable words with short vowel sounds"
+    },
+    {
+      "name": "Silent E",
+      "description": "Silent E at end makes vowel say its name",
+      "examples": ["bake", "hope", "made", "cute"],
+      "exceptions": ["have", "give", "love"]
+    },
+    {
+      "name": "Magic E",
+      "description": "Silent E changes short vowel to long vowel",
+      "before": ["cap", "hop"],
+      "after": ["cape", "hope"]
+    }
+  ],
+  "constant_patterns": [
+    {
+      "pattern": "Silent H",
+      "description": "H at start of word is silent",
+      "examples": ["hour", "honor", "honk"],
+      "frequency": "high"
+    },
+    {
+      "pattern": "Soft C and G",
+      "description": "C before E/I is /s/, G before E/I is /j/",
+      "examples": ["cent", "city", "gentle", "gem"],
+      "exceptions": ["cycle", "garage"]
+    }
+  ]
+}

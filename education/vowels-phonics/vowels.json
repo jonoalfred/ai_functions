@@ -1,0 +1,23 @@
+{
+  "vowels": {
+    "a": {
+      "sounds": ["/eɪ/", "/æ/", "/ɑː/"],
+      "spellings": ["a", "ai", "ay", "ae", "al", "au"],
+      "short_sounds": ["cat", "hat", "mat"],
+      "long_sounds": ["bait", "day", "great"],
+      "silent_patterns": ["certain", "distant"]
+    },
+    "e": {
+      "sounds": "/iː/|/ɛ/",
+      "spellings": ["e", "ea", "ee", "ei", "ey"],
+      "short_sounds": ["bed", "red", "net"],
+      "long_sounds": ["bee", "meet", "green"]
+    },
+    "i": {
+      "sounds": "/aɪ/|/ɪ/",
+      "spellings": ["i", "ie", "y", "igh"],
+      "short_sounds": ["sit", "bit", "pin"],
+      "long_sounds": ["bike", "eye", "high"]
+    }
+  }
+}
