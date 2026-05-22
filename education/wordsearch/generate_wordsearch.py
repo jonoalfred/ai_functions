@@ -114,3 +114,77 @@ def add_word(vowel: str, word: str) -> None:
 def get_word_count(vowel: str) -> int:
     """Get count of words for a vowel."""
     return len(get_words_for_vowel(vowel))
+
+
+# ============ WORD FILTERING (Job 2) ============
+# Efficient word filtering - lightweight string matching
+
+def filter_words_by_vowel(words: List[str], vowel: str) -> List[str]:
+    """Filter words containing the vowel sound."""
+    return [w for w in words if vowel in w.lower()]
+
+def filter_by_age(words: List[str], age: int) -> List[str]:
+    """Filter words by age difficulty (simplified) - keep all for now."""
+    return words  # Can add age logic later if needed
+
+def get_20_words(vowel: str, age: int = 7) -> List[str]:
+    """Get up to 20 words for a vowel and age."""
+    raw_words = get_words_for_vowel(vowel)
+    filtered = filter_words_by_vowel(raw_words, vowel)
+    age_filtered = filter_by_age(filtered, age)
+    return age_filtered[:20]  # Limit to 20 words
+
+def ensure_minimum_words(vowel: str, target: int = 20) -> Tuple[List[str], bool]:
+    """Ensure minimum word count, return words and success flag."""
+    words = get_20_words(vowel)
+    return words, len(words) >= target
+
+def get_fallback_words(vowel: str, count: int = 5) -> List[str]:
+    """Return simple fallback words if database empty."""
+    fallbacks = {
+        "a": ["aardvark", "ant", "ago", "apt", "axe"],
+        "e": ["elephant", "egg", "end", "ear", "eat"],
+        "i": ["igloo", "ink", "ivy", "ice", "ill"],
+        "o": ["owl", "oar", "odd", "on", "ox"],
+        "u": ["umbrella", "up", "use", "urn", "url"],
+    }
+    default = ["apple", "book", "cat", "dog", "fish"]
+    return fallbacks.get(vowel, default)[:count]
+
+def select_best_words(vowel: str, target: int = 20) -> List[str]:
+    """Select best 20 words for grid generation."""
+    words, has_enough = ensure_minimum_words(vowel, target)
+    if has_enough:
+        return words
+    # If not enough, use first available + fallbacks
+    available = get_words_for_vowel(vowel)
+    fallback = get_fallback_words(vowel)
+    combined = available + fallback
+    return combined[:target]
+
+
+# ============ MAIN EXECUTION ============
+def main():
+    """Main entry point."""
+    args = setup_argument_parser()
+    
+    # Get words for this vowel
+    words = select_best_words(args.vowel, args.words)
+    
+    if not words:
+        print(f"No words found for vowel: {args.vowel}")
+        print("Run first to build database, or add words manually.")
+        return
+    
+    print(f"Generated wordsearch for vowel: {args.vowel}")
+    print(f"Found {len(words)} words (target: {args.words})")
+    
+    # TODO: Call grid generation here
+    # grid, placed_words = generate_grid(words, args.grid_size)
+    # TODO: Save output
+    # save_wordsearch(grid, words, args.output_dir)
+
+if __name__ == "__main__":
+    main()
+
+
