@@ -188,3 +188,73 @@ if __name__ == "__main__":
     main()
 
 
+# ============ FILE OUTPUT (Job 4) ============
+# Save grid and word list to files - lightweight, no heavy deps
+
+def save_wordlist(words: List[str], filepath: str) -> None:
+    """Save word list to JSON file."""
+    data = {"words": words}
+    Path(filepath).parent.mkdir(parents=True, exist_ok=True)
+    with open(filepath, 'w') as f:
+        json.dump(data, f, indent=2)
+
+def save_grid_ascii(grid: List[List[str]], filepath: str) -> None:
+    """Save grid as ASCII text file."""
+    Path(filepath).parent.mkdir(parents=True, exist_ok=True)
+    with open(filepath, 'w') as f:
+        for row in grid:
+            f.write(' '.join(row) + '\n')
+
+def save_solution(words: List[str], filepath: str) -> None:
+    """Save solution file with word list."""
+    Path(filepath).parent.mkdir(parents=True, exist_ok=True)
+    with open(filepath, 'w') as f:
+        f.write('SOLUTION\n')
+        f.write('=' * 20 + '\n')
+        for word in words:
+            f.write(word + ' \n')
+
+
+def main():
+    """Main entry point - full execution."""
+    args = setup_argument_parser()
+    
+    # Get words for this vowel
+    words = select_best_words(args.vowel, args.words)
+    
+    if not words:
+        print(f"No words found for vowel: {args.vowel}")
+        print("Run first to build database, or add words manually.")
+        return
+    
+    print(f"Generated wordsearch for vowel: {args.vowel}")
+    print(f"Found {len(words)} words (target: {args.words})")
+    
+    # Create grid
+    grid, placed_words = generate_grid(words, args.grid_size)
+    print(f"Placed {len(placed_words)} words in {args.grid_size}x{args.grid_size} grid")
+    
+    # Save all outputs
+    puzzle_id = f"{args.vowel}_{len(words)}w"
+    output_dir = Path(args.output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Save word list
+    wordlist_path = output_dir / f"{puzzle_id}_words.json"
+    save_wordlist(placed_words, str(wordlist_path))
+    
+    # Save grid
+    grid_path = output_dir / f"{puzzle_id}_grid.txt"
+    save_grid_ascii(grid, str(grid_path))
+    
+    # Save solution
+    solution_path = output_dir / f"{puzzle_id}_solution.txt"
+    save_solution(placed_words, str(solution_path))
+    
+    print(f"Saved to: {output_dir}")
+
+if __name__ == "__main__":
+    main()
+
+
+
