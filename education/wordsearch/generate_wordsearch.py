@@ -66,3 +66,51 @@ def setup_argument_parser() -> argparse.Namespace:
     )
     
     return parser.parse_args()
+
+
+# ============ DATABASE SCHEMA (Job 1) ============
+# Efficient persistent word database - builds on execution
+
+from datetime import datetime
+
+DB_FILE = Path(__file__).parent / "words.json"
+
+def get_db() -> Dict:
+    """Load or create word database."""
+    if not DB_FILE.exists():
+        # Create empty schema with all vowel categories
+        schema = {
+            "long_a": [], "short_a": [],
+            "long_e": [], "short_e": [],
+            "long_i": [], "long_o": [], "short_o": [],
+            "long_u": [], "short_u": [],
+            "ai": [], "ay": [], "oy": [], "au": [], "aw": [],
+            "ea": [], "ee": [], "ie": [], "oa": [], "oo": [],
+            "ow": [], "ou": [], "er": [], "ir": [], "or": [],
+        }
+        return schema
+    
+    with open(DB_FILE) as f:
+        return json.load(f)
+
+def save_db(db: Dict) -> None:
+    """Persist database to file."""
+    with open(DB_FILE, "w") as f:
+        json.dump(db, f, indent=2)
+
+def get_words_for_vowel(vowel: str) -> List:
+    """Get words for a specific vowel sound."""
+    db = get_db()
+    return db.get(vowel, [])
+
+def add_word(vowel: str, word: str) -> None:
+    """Add a single word to the database."""
+    db = get_db()
+    if vowel not in db:
+        db[vowel] = []
+    db[vowel].append({"word": word, "timestamp": datetime.now().isoformat()})
+    save_db(db)
+
+def get_word_count(vowel: str) -> int:
+    """Get count of words for a vowel."""
+    return len(get_words_for_vowel(vowel))
