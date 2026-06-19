@@ -188,6 +188,112 @@ if __name__ == "__main__":
     main()
 
 
+# ============ GRID GENERATION HELPERS (Job 4 - Smallest Piece) ============
+
+
+def place_word_at(grid: List[List[str]], word: str, start_row: int,
+                  start_col: int, row_delta: int, col_delta: int) -> None:
+    """Place a word in the grid at the given starting position and direction."""
+    word_len = len(word)
+    
+    for i in range(word_len):
+        row = start_row + i * row_delta
+        col = start_col + i * col_delta
+        grid[row][col] = word[i]
+
+
+def fill_grid(grid: List[List[str]], size: int) -> None:
+    """Fill remaining empty cells with random letters.
+    Uses vowels and consonants weighted appropriately."""
+    import random
+    
+    # Letter pool with slightly more consonants
+    letters = "aeiou" + "bcdfghjklmnpqrstvwxyz" * 2  # More consonants
+    
+    for row in range(size):
+        for col in range(size):
+            if grid[row][col] is None:
+                grid[row][col] = random.choice(letters)
+
+
+def can_place_word(grid: List[List[str]], word: str, start_row: int,
+                   start_col: int, row_delta: int, col_delta: int,
+                   size: int) -> bool:
+    """Check if a word can be placed starting at (start_row, start_col)
+    in the given direction."""
+    word_len = len(word)
+    
+    for i in range(word_len):
+        row = start_row + i * row_delta
+        col = start_col + i * col_delta
+        
+        # Check bounds
+        if row < 0 or row >= size or col < 0 or col >= size:
+            return False
+        
+        # Check if cell is occupied (but allow overlaps with existing letters)
+        if grid[row][col] is not None:
+            # If cell has a letter, it must match what we're placing
+            if grid[row][col] != word[i]:
+                return False
+    
+    return True
+
+
+def try_place_word(grid: List[List[str]], word: str, size: int,
+                   directions: List[Tuple[int, int]]) -> bool:
+    """Try to place a word in the grid using various directions.
+    Returns True if word was placed successfully."""
+    
+    word_len = len(word)
+    
+    # Try each direction
+    for row_delta, col_delta in directions:
+        # Try each starting position
+        for start_row in range(size):
+            for start_col in range(size):
+                if can_place_word(grid, word, start_row, start_col,
+                                 row_delta, col_delta, size):
+                    place_word_at(grid, word, start_row, start_col,
+                                 row_delta, col_delta)
+                    return True  # Word placed successfully
+    
+    return False  # Could not place word
+
+
+def generate_grid(words: List[str], size: int) -> Tuple[List[List[str]], List[str]]:
+    """Generate a word search grid with words placed in various directions."""
+    # 1. Initialize empty grid with spaces
+    grid = [[None for _ in range(size)] for _ in range(size)]
+
+    # 2. All possible directions: (row_delta, col_delta)
+    directions = [
+        (0, 1),   # horizontal right
+        (1, 0),   # vertical down
+        (0, -1),  # horizontal left
+        (-1, 0),  # vertical up
+        (1, 1),   # diagonal down-right
+        (1, -1),  # diagonal down-left
+        (-1, 1),  # diagonal up-right
+        (-1, -1), # diagonal up-left
+    ]
+
+    # 3. Track words that fit
+    placed_words = []   # Track words that fit
+
+    # 4. Try to place each word
+    for word in words:
+        placed = try_place_word(grid, word, size, directions)
+        if placed:
+            placed_words.append(word)
+
+    # 5. Fill remaining empty cells with random letters
+    fill_grid(grid, size)
+
+    # 6. Return results
+    return grid, placed_words
+
+
 # ============ FILE OUTPUT (Job 4) ============
 # Save grid and word list to files - lightweight, no heavy deps
 
